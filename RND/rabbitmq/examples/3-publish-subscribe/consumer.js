@@ -26,7 +26,7 @@ class PublishSubscribeConsumer {
             channel.consume(queueName, (message) => {
                 if (message) {
                     const data = JSON.parse(message.content.toString());
-                    console.log(`📥 ${this.serviceName} received: ${data.message}`);
+                    console.log(`📥 ${this.serviceName} received: ${data.message} at time`);
                     
                     // Simulate service-specific processing
                     this.processNotification(data);

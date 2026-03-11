@@ -1,4 +1,5 @@
 import RabbitMQConnection from '../base/connection.js';
+import cron from "node-cron";
 
 class WorkQueueProducer {
     constructor(producerId) {
@@ -20,10 +21,12 @@ class WorkQueueProducer {
             };
             
             const messageBuffer = Buffer.from(JSON.stringify(message));
-            channel.sendToQueue(this.queueName, messageBuffer, { persistent: true });
+            channel.sendToQueue(this.queueName, messageBuffer, { persistent: false });
             
             console.log(`📤 Producer ${this.producerId} sent: ${task}`);
-            
+
+             // Wait for message to be written to queue
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             await this.connection.close();
         } catch (error) {
             console.error('❌ Producer error:', error.message);
@@ -44,4 +47,11 @@ async function runMultipleProducers() {
     await producer1.sendTask('Update analytics');
 }
 
-runMultipleProducers();
+// runMultipleProducers();
+
+// Schedule to run every 30 seconds
+cron.schedule("*/30 * * * * *", () => {
+  console.log("Running producer at", new Date().toLocaleTimeString());
+  runMultipleProducers();
+});
+// runMultipleProducers();

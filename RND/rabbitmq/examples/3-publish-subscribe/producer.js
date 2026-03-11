@@ -1,4 +1,5 @@
 import RabbitMQConnection from '../base/connection.js';
+import cron from 'node-cron'
 
 class PublishSubscribeProducer {
     constructor() {
@@ -19,7 +20,7 @@ class PublishSubscribeProducer {
             channel.publish(this.exchangeName, '', messageBuffer);
             
             console.log(`📢 Published: ${JSON.stringify(message)}`);
-            
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             await this.connection.close();
         } catch (error) {
             console.error('❌ Publisher error:', error.message);
@@ -46,4 +47,9 @@ async function sendNotifications() {
     }, 2000);
 }
 
-sendNotifications();
+// Schedule task for 30 Seconds
+cron.schedule("*/30 * * * * *", () => {
+    console.log("Running producer at", new Date().toISOString());
+    sendNotifications();
+});
+// sendNotifications();

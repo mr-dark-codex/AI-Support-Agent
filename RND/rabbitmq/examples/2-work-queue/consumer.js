@@ -10,13 +10,13 @@ class WorkQueueConsumer {
     async processTask(message) {
         const data = JSON.parse(message.content.toString());
         
-        console.log(`🔄 Consumer ${this.consumerId} processing: ${data.task}`);
+        console.log(`🔄 Consumer ${this.consumerId} processing: ${data.task} at time : ${new Date().toLocaleTimeString()}`);
         
         // Simulate work (random processing time)
         const processingTime = Math.random() * 3000 + 1000; // 1-4 seconds
         await new Promise(resolve => setTimeout(resolve, processingTime));
         
-        console.log(`✅ Consumer ${this.consumerId} completed: ${data.task}`);
+        console.log(`✅ Consumer ${this.consumerId} completed: ${data.task} at time : ${new Date().toLocaleTimeString()}`);
     }
 
     async start() {
